@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            xmlns:tools="http://schemas.android.com/tools"
+            android:id="@+id/view_navigation"
+            app:startDestination="@id/mainFragment">
+    <fragment
+    android:id="@+id/mainFragment"
+    android:name="com.example.myview.MainFragment"
+    android:label="@string/main_fragment"
+    tools:layout="@layout/fragment_main">
+        <action android:id="@+id/action_main_to_view"
+        app:destination="@id/viewMainFragment">
+        </action>
+
+    </fragment>
+
+    <fragment
+    android:id="@+id/viewMainFragment"
+    android:name="com.example.myview.view.ViewMainFragment"
+    android:label="@string/view_main_fragment"
+    tools:layout="@layout/fragment_main">
+        <action
+        android:id="@+id/action_main_to_slide_delete"
+        app:destination="@id/SlideDeleteRecycleViewDemo">
+        </action>
+    </fragment>
+    <fragment
+            android:id="@+id/SlideDeleteRecycleViewDemo"
+            android:name="com.example.myview.viewDemo.SlideDeleteRecycleViewDemo"
+            android:label="@string/slide_delete_fragment"
+            tools:layout="@layout/fragment_slide_delete"
+    />
+
+</navigation>

@@ -7,6 +7,11 @@
     <string name="next">Next</string>
     <string name="previous">Previous</string>
 
+    <string name="main_fragment">首页</string>
+
+    <string name="view_main_fragment">自定义view</string>
+    <string name="slide_delete_fragment">左滑删除列表</string>
+
     <string name="hello_first_fragment">Hello first fragment</string>
     <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
 </resources>

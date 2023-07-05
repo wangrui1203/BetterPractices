@@ -1,5 +1,8 @@
 pluginManagement {
     repositories {
+        maven{ url'https://maven.aliyun.com/repository/google/' }
+        maven{ url'https://maven.aliyun.com/repository/public/' }//central仓和jcenter仓的聚合仓
+
         gradlePluginPortal()
         google()
         mavenCentral()
@@ -8,8 +11,11 @@ pluginManagement {
 dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {
+        maven{ url'https://maven.aliyun.com/repository/google/' }
+        maven{ url'https://maven.aliyun.com/repository/public/' }//central仓和jcenter仓的聚合仓
         google()
         mavenCentral()
+        //jcenter() // Warning: this repository is going to shut down soon
     }
 }
 rootProject.name = "MyView"

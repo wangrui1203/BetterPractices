@@ -27,7 +27,7 @@
     </fragment>
     <fragment
             android:id="@+id/SlideDeleteRecycleViewDemo"
-            android:name="com.example.myview.viewDemo.SlideDeleteRecycleViewDemo"
+            android:name="com.example.myview.viewDemo.SlideDeleteRecyclerViewDemo"
             android:label="@string/slide_delete_fragment"
             tools:layout="@layout/fragment_slide_delete"
     />

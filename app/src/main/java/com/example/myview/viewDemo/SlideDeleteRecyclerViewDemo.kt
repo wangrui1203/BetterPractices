@@ -12,7 +12,7 @@ import com.example.myview.base.BaseFragment
 import com.example.myview.base.BaseRecyclerAdapter
 import com.example.myview.base.ViewHolder
 
-class SlideDeleteRecycleViewDemo: BaseFragment() {
+class SlideDeleteRecyclerViewDemo: BaseFragment() {
     private var _binding: FragmentSlideDeleteBinding? = null
     private val binding get() = _binding!!
 

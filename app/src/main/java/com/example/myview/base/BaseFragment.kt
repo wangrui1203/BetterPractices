@@ -16,6 +16,7 @@ import androidx.fragment.app.FragmentActivity
  * 支持默认Toast简化、页面跳转简化、权限申请等功能
  * https://github.com/silencefly96/fundark/blob/main/module_base/src/main/java/com/silencefly96/module_base/base/BaseFragment.kt
  */
+//https://juejin.cn/post/7057144897060470815?searchId=20230725095742A47A8589E9229D472E75
 abstract class BaseFragment : Fragment() {
     /**
      * 当前Fragment渲染的视图View

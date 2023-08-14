@@ -1,5 +1,6 @@
 package com.example.myview.base
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -57,6 +58,7 @@ abstract class BaseRecyclerAdapter<T>(
         if (mItemClickListener != null) {
             //根布局点击事件
             holder.itemView.setOnClickListener { v: View? ->
+//                Log.d("","wwwww ${holder.layoutPosition}")
                 val o = mItems[holder.layoutPosition]
                 mItemClickListener!!.onItemClick(v, o, holder.layoutPosition)
             }

@@ -1,6 +1,7 @@
 package com.example.myview
 
 import android.content.Context
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -26,6 +27,9 @@ class MainFragment: BaseFragment() {
 
         add(Item(3, "custom widget",
             "自定义widget实用工具"))
+
+        add(Item(4, "custom module",
+            "常用封装小module"))
     }
 
     //适配器
@@ -54,6 +58,7 @@ class MainFragment: BaseFragment() {
                     1 -> R.id.action_main_to_view
 //                    2 -> R.id.action_main_to_game
 //                    3 -> R.id.action_main_to_widget
+                    4 -> R.id.action_main_to_module
                     else -> 0
                 })
                 // showToast("title: ${itemObj.title}")

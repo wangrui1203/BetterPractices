@@ -2,6 +2,7 @@ package com.example.myview.view
 
 import android.content.ClipData
 import android.content.Context
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -75,6 +76,7 @@ class ViewMainFragment: BaseFragment() {
         adapter.setOnItemClickListener(object : BaseRecyclerAdapter.ItemClickListener<Item> {
             override fun onItemClick(view: View?, itemObj: Item, position: Int) {
                 // navigation跳转
+//                Log.d("","wwwww item ${itemObj}")
                 view?.findNavController()?.navigate(when(itemObj.index) {
                     1 -> R.id.action_main_to_slide_delete
 //                    2 -> R.id.action_main_to_left_delete

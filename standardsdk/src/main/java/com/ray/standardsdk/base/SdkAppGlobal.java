@@ -22,6 +22,7 @@ public class SdkAppGlobal {
     private SdkAppGlobal(){
 
     }
+    //Android插件化开发之Hook StartActivity方法
     //https://developer.aliyun.com/article/834303
     public static Application getApplication(){
         Application application = null;

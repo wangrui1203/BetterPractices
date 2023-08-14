@@ -2,23 +2,22 @@ package com.ray.standardsdk.base;
 
 import android.app.Activity;
 import android.app.Service;
-import android.content.ComponentName;
-import android.content.Context;
-import android.content.ServiceConnection;
-import android.os.Handler;
-import android.os.IBinder;
-import android.os.IInterface;
+import android.content.*;
+import android.os.*;
 import android.os.Process;
 import android.util.Log;
 import androidx.annotation.IntDef;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import com.ray.standardsdk.exception.TransactionException;
+import kotlin.KotlinNullPointerException;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.lang.annotation.ElementType;
 import java.util.HashMap;
+import java.util.Objects;
 
 /**
  * @author ray
@@ -95,6 +94,7 @@ public abstract class SdkBase<T extends IInterface> {
                     //当客户端在onServiceDisconnected调用之前调用disconnect时，可能会发生这种情况为disconnected
                     return;
                 }
+                //释放与更新状态
                 handleCarDisconnectLocked();
             }
             if(mLifecycleChangeListener != null){
@@ -109,6 +109,104 @@ public abstract class SdkBase<T extends IInterface> {
     public SdkBase(@Nullable Context context, @Nullable Handler handler, @Nullable SdkServiceLifecycleListener listener){
         if(context == null){
             mContext = SdkAppGlobal.getApplication();
+        }else {
+            mContext = context;
+        }
+        assertNonNullContent(mContext);
+        mEventHandler = determineEventHandler(handler);
+        mMainThreadEventHandler = determineMainThreadEventHandler(mEventHandler);
+        mLifecycleChangeListener = listener;
+        if(listener == null){
+            mConstructionStack = new RuntimeException();
+        }else {
+            mConstructionStack = null;
+        }
+        startConnect();
+    }
+
+    private final Runnable mConnectionRetryRunnable = new Runnable() {
+        @Override
+        public void run() {
+            startConnect();
+        }
+    };
+
+    private final Runnable mConnectionRetryFailedRunnable = new Runnable() {
+        @Override
+        public void run() {
+            mServiceConnection.onServiceDisconnected(new ComponentName(getServicePackage(), getServiceClassName()));
+        }
+    };
+    private int mConnectionRetryCount = 0;
+    private boolean mServiceBound = false;
+
+    private void startConnect() {
+        ComponentName componentName = new ComponentName(getServicePackage(), getServiceClassName());
+        Intent intent = new Intent();
+        if(getServiceAction() != null){
+            intent.setAction(getServiceAction());
+        }
+        intent.setComponent(componentName);
+        //是否需要启动Service
+        if(needStartService()){
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                getContext().startForegroundService(intent);
+            } else {
+                getContext().startService(intent);
+            }
+        }
+        // 绑定Service
+        boolean bound = getContext().bindService(intent, mServiceConnection,
+                Context.BIND_AUTO_CREATE);
+        // 如果需要考虑多用户的问题，可以使用下面的系统方法
+//        boolean bound = getContext().bindServiceAsUser(intent, mServiceConnection,
+//                Context.BIND_AUTO_CREATE, UserHandle.CURRENT_OR_SELF);
+        Log.w(getLogTag(), "startConnect: [bindService] result " + bound);
+        // 进入重连状态
+        synchronized (mLock) {
+            if (!bound) {
+                mConnectionRetryCount++;
+                if (mConnectionRetryCount > getConnectionRetryCount()) {
+                    // 多次重连失败
+                    Log.w(getLogTag(), "cannot bind to service after max retry :" + getServiceClassName());
+                    mMainThreadEventHandler.post(mConnectionRetryFailedRunnable);
+                } else {
+                    Log.w(getLogTag(), "cannot bind to service retry ->" + getServiceClassName() + ";" + mConnectionRetryCount + " times");
+                    mEventHandler.postDelayed(mConnectionRetryRunnable, getConnectionRetryInterval());
+                }
+            } else {
+                mEventHandler.removeCallbacks(mConnectionRetryRunnable);
+                mMainThreadEventHandler.removeCallbacks(mConnectionRetryFailedRunnable);
+                mConnectionRetryCount = 0;
+                mServiceBound = true;
+            }
+        }
+    }
+
+    private Handler determineMainThreadEventHandler(Handler mEventHandler) {
+        Looper mainLooper = Looper.getMainLooper();
+        return (mEventHandler.getLooper() == mainLooper) ? mEventHandler : new Handler(mainLooper);
+    }
+
+    private Handler determineEventHandler(@Nullable Handler handler) {
+        if(handler == null){
+            Looper looper = Looper.getMainLooper();
+            handler = new Handler(looper);
+        }
+        return handler;
+    }
+
+    //继承关系：
+    //Context<-ContextImpl
+    //Context<-ContextWrapper<-Application/Service/ContextThemeWrapper
+    //ContextThemeWrapper <- Activity
+    private void assertNonNullContent(Context context){
+        Objects.requireNonNull(context);
+        if(context instanceof ContextWrapper
+                && ((ContextWrapper) context).getBaseContext() == null){
+            throw new KotlinNullPointerException(
+                    "ContextWrapper with null base as Context"
+            );
         }
     }
 
@@ -173,11 +271,93 @@ public abstract class SdkBase<T extends IInterface> {
 
     /*****************************子类需要实现的方法********************************/
 
+    // 服务端的包名
+    protected abstract String getServicePackage();
+
+    // 服务端Service的类名
+    protected abstract String getServiceClassName();
+
+    // 服务端的Action
+    protected abstract String getServiceAction();
+
     // 将服务端的 Binder 对象转换为客户端的具体对象。
     protected abstract T asInterface(IBinder binder);
+
     protected abstract String getLogTag();
 
+    // 获取本地Binder的缓存
+    protected HashMap<Integer, SdkManagerBase> getManagerCache() {
+        return mServiceMap;
+    }
+
+    // 是否需要调用 startService
+    protected abstract boolean needStartService();
+
+    // 获取连接失败时的重试次数
+    protected abstract long getConnectionRetryCount();
+
+    // 获取连接失败时的重试间隔，单位 ms
+    protected abstract long getConnectionRetryInterval();
+
     /*****************************对外暴露的方法********************************/
+
+    public Context getContext() {
+        return mContext;
+    }
+
+    public Handler getEventHandler() {
+        return mEventHandler;
+    }
+
+    public ServiceConnection getServiceConnection() {
+        return mServiceConnection;
+    }
+
+    public boolean isConnected() {
+        synchronized (mLock) {
+            return mService != null;
+        }
+    }
+
+    public boolean isConnecting() {
+        synchronized (mLock) {
+            return mConnectionState == StateType.STATE_CONNECTING;
+        }
+    }
+    public void connect() {
+        synchronized (mLock) {
+            if (mConnectionState != StateType.STATE_DISCONNECTED) {
+                Log.w(getLogTag(), "connect: already connected or connecting");
+            }
+            mConnectionState = StateType.STATE_CONNECTING;
+            startConnect();
+        }
+    }
+
+    public void disconnect() {
+        synchronized (mLock) {
+            handleCarDisconnectLocked();
+            if (mServiceBound) {
+                // unbindService 时 ServiceConnection 的 onServiceDisconnected 不会被回调
+                mContext.unbindService(mServiceConnection);
+                mServiceBound = false;
+            }
+        }
+    }
+
+    public <V> V handleRemoteExceptionFromService(RemoteException e, V returnValue) {
+        handleRemoteExceptionFromService(e);
+        return returnValue;
+    }
+
+    public void handleRemoteExceptionFromService(RemoteException e) {
+        if (e instanceof TransactionTooLargeException) {
+            Log.w(getLogTag(), "service threw TransactionTooLargeException");
+            throw new TransactionException(e, "service threw TransactionTooLargeException");
+        } else {
+            Log.w(getLogTag(), "Car service has crashed", e);
+        }
+    }
 
     public interface SdkServiceLifecycleListener<T extends SdkBase> {
         void onLifecycleChanged(@NonNull T sdk, boolean ready);

@@ -14,6 +14,8 @@
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/app" />
             <option value="$PROJECT_DIR$/lib_standardsdk" />
+            <option value="$PROJECT_DIR$/mysdk" />
+            <option value="$PROJECT_DIR$/myserver" />
             <option value="$PROJECT_DIR$/standardsdk" />
           </set>
         </option>

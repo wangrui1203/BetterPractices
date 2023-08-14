@@ -21,6 +21,7 @@ class SlideDeleteRecyclerViewDemo: BaseFragment() {
     private val mAdapter = object: BaseRecyclerAdapter<Int>(R.layout.item_slide_delete, mData) {
         override fun convertView(viewHolder: ViewHolder?, item: Int, position: Int) {
             viewHolder?.setText(R.id.order, position.toString())
+            //TODO 这其中的item和position???
             // viewHolder?.setText(R.id.title, item.toString())
             viewHolder?.setOnClickListener(R.id.delete) {
                 val index = mData.indexOf(item)

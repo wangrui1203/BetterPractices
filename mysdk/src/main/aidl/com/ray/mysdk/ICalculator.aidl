@@ -23,6 +23,7 @@ interface ICalculator {
       oneway void unregisterListener(ICalculatorListener listener);
       //binderpool
       IBinder queryBinder(int type);
-      //权限验证
-      oneway void optionPermission(int i);
+      //权限验证 oneway则服务端拿不到调用端对进程号
+//      oneway void optionPermission(int i);
+      void optionPermission(int i);
 }

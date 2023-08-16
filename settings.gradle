@@ -29,3 +29,5 @@ include ':myserver'
 include ':MyLibs:loglib'
 
 //include ':loglib'
+include ':standardserver'
+include ':standardapp'

@@ -31,7 +31,15 @@ public class CalculatorBinder extends ICalculator.Stub{
         mContext = context;
     }
 
+    // 一个服务端可能会同时连接多个客户端，所以对于客户端注册过来的binder对象，我们应该是使用一个List集合来保存
+    // 如果使用ArrayList或CopyOnWriteArrayList， 来保存binder实例，需要在断开连接时，清楚保存的binder
+    // 否则调用已经断开连接的binder，会报出DeadObjectException问题
+    // =》可以直接使用MyRemoteCallback，可以在进程销毁时自动清理，主要用于执行服务端到客户端的回调
     private final List<ICalculatorListener> mListeners = new CopyOnWriteArrayList<>();
+
+    // 使用MyRemoteCallback
+    // 注册 register-unregister
+    // 处理回调 beginBroadcast(),getBroadcastItem(int),finishBroadcast()
     private final MyRemoteCallback<ICalculatorListener> mCallbackList = new MyRemoteCallback<>();
 
     private final SparseArray<IBinder> mCache = new SparseArray<>();
@@ -113,12 +121,16 @@ public class CalculatorBinder extends ICalculator.Stub{
 //        Log.i(TAG, "optionOneway: " + i);
     }
 
+    //在服务端保存一个binder实例，在需要时服务端可以通过该实例向客户端发送请求
+    //ICalculatorListener相当于客户端发给服务端的binder
     @Override
     public void registerListener(final ICalculatorListener listener) throws RemoteException {
         KLog.i(TAG, "registerListener: listener sign:" + listener.hashCode());
         KLog.i(TAG, "registerListener: listener IBinder sign:" + listener.asBinder());
 
-        // 错误做法，因为每次Listener都不是一个对象，所以会导致无法移除，应该保存listener.asBinder()来判断
+        // 错误做法，因为aidl传递，存在两次序列化，因此客户端传递给服务端的对象并不是同一个，因此无法标识
+        // 因为每次Listener都不是一个对象，所以会导致无法移除，应该保存listener.asBinder()来判断
+        // asBinder返回的时ibinder对象，每次都是同一个
 //            if (!mListeners.contains(listener)) {
 //                mListeners.add(listener);
 //            }
@@ -136,47 +148,49 @@ public class CalculatorBinder extends ICalculator.Stub{
         // 正确做法
         mCallbackList.register(listener, "我是cookie");
 
-//            for (int i = 0; i < 10; i++) {
-//                new Thread(() -> {
-//                    notifyToClient();
-//                }).start();
-//            }
+        for (int i = 0; i < 5; i++) {
+            new Thread(() -> {
+                notifyToClient();
+            }).start();
+        }
 
 
     }
 
     @Override
     public void unregisterListener(final ICalculatorListener listener) {
-        KLog.i(TAG, "unregisterListener: listener sign:" + listener);
-        KLog.i(TAG, "unregisterListener: listener IBinder sign:" + listener.asBinder());
+        KLog.d(TAG, "unregisterListener: listener sign:" + listener);
+        KLog.d(TAG, "unregisterListener: listener IBinder sign:" + listener.asBinder());
         // 错误做法，因为每次Listener都不是一个对象，所以会导致无法移除，应该保存listener.asBinder() 或使用 RemoteCallbackList
 //            mListeners.remove(listener);
 
         mCallbackList.unregister(listener);
-
+        KLog.d(TAG, "unregisterListener - remain: " + mCallbackList.getRegisteredCallbackCount());
     }
 
 
+    //对客户端进行权限检查
     @Override
     public void optionPermission(final int i) throws RemoteException {
         // 在oneway 接口中Binder.getCallingPid() 始终为 0
         KLog.i(TAG, "optionPermission: calling pid " + Binder.getCallingPid() + "; calling uid" + Binder.getCallingUid());
 
-        // 方法一：检查权限,如果没有权限，抛出SecurityException
-        mContext.enforceCallingPermission("com.ray.permission", "没有权限");
+//        // 方法一：检查权限,如果没有权限，抛出SecurityException
+//        mContext.enforceCallingPermission("com.ray.permission", "没有权限");
 
         // 方法二：检查权限，如果没有权限，返回false
         boolean checked = mContext.checkCallingPermission("com.ray.permission") == PackageManager.PERMISSION_GRANTED;
-        KLog.e(TAG, "optionPermission: " + checked);
+        KLog.d(TAG, "optionPermission: " + checked);
     }
 
     // 向客户端发送消息
+    // 方法上加锁，因为beginBroadcast和finishBroadcast是成对出现对，可能会存在多线程问题，出现调用两次beginBroadcast
     private synchronized void notifyToClient() {
         KLog.i(TAG, "notifyToClient");
         int n = mCallbackList.beginBroadcast();
         for (int i = 0; i < n; i++) {
             try {
-                mCallbackList.getBroadcastItem(i).callback(i + "--");
+                mCallbackList.getBroadcastItem(i).callback(i + " --");
             } catch (RemoteException e) {
                 e.printStackTrace();
             }
@@ -184,6 +198,10 @@ public class CalculatorBinder extends ICalculator.Stub{
         mCallbackList.finishBroadcast();
     }
 
+    // 管理和分发binder的机制，使不同模块之间使用统一的一个service进行binder通信，客户端通过
+    // 一个binder连接到服务端，根据不同的业务需求，获取到对象的binder实例，从而实现跨进程通信。
+    // 减少客户端和服务端之间的连接数，提高性能和稳定性
+    // 车载项目carService使用的就是这样一个机制，其他应用使用的不多
     @Override
     public IBinder queryBinder(final int type) throws RemoteException {
         IBinder binder = mCache.get(type);

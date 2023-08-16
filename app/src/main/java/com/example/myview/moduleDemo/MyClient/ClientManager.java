@@ -11,6 +11,7 @@ import android.os.ParcelFileDescriptor;
 import android.os.RemoteException;
 import android.util.Log;
 import androidx.annotation.RequiresPermission;
+import com.example.loglib.KLog;
 import com.example.myview.utils.AppUtils;
 import com.ray.mysdk.ICalculator;
 import com.ray.mysdk.bean.Sample;
@@ -50,7 +51,7 @@ public class ClientManager {
     private final ServiceConnection serviceConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
-            Log.d(TAG,"-- service connected --");
+            KLog.d(TAG,"-- service connected --");
             //获取服务端对象的代理，并转换为aidl接口类型的对象，从而调用服务端提供的方法
             mCalculator = ICalculator.Stub.asInterface(service);
 
@@ -60,13 +61,13 @@ public class ClientManager {
             try {
                 service.linkToDeath(mDeathRecipient, 0);
             } catch (Exception e) {
-                Log.e(TAG, e.getMessage());
+                KLog.e(TAG, e.getMessage());
             }
         }
 
         @Override
         public void onServiceDisconnected(ComponentName name) {
-            Log.d(TAG,"-- service disconnected --");
+            KLog.d(TAG,"-- service disconnected --");
             mCalculator = null;
         }
     };
@@ -91,7 +92,7 @@ public class ClientManager {
         intent.setAction("com.example.aidl.ServerService");
         intent.setClassName("com.ray.myserver", "com.ray.myserver.ServerService");
         boolean suc = context.bindService(intent, serviceConnection, context.BIND_AUTO_CREATE);
-        Log.i(TAG, "bindToService: " + suc);
+        KLog.i(TAG, "bindToService: " + suc);
     }
 
     //基础使用
@@ -122,9 +123,9 @@ public class ClientManager {
                         result = mCalculator.divide(num1, num2);
                         break;
                 }
-                Log.i(TAG, "calculate result : " + result);
+                KLog.i(TAG, "calculate result : " + result);
             } catch (RemoteException exception) {
-                Log.i(TAG, "calculate: " + exception);
+                KLog.i(TAG, "calculate: " + exception);
             }
         }else{
             bindToService(mContext);
@@ -141,7 +142,7 @@ public class ClientManager {
                 sample.setNum(12);
                 mCalculator.optionParcel(sample);
             } catch (Exception exception) {
-                Log.e(TAG, "transferCustomType: " + exception);
+                KLog.e(TAG, "transferCustomType: " + exception);
             }
         }else{
             bindToService(mContext);
@@ -157,10 +158,10 @@ public class ClientManager {
                 Sample2 sample2 = new Sample2();
                 sample2.setNum(22);
                 sample.setSample2(sample2);
-                Log.d(TAG, "sample1+sampl2" + sample.toString());
+                KLog.d(TAG, "sample1+sampl2" + sample.toString());
                 mCalculator.optionParcel(sample);
             } catch (Exception exception) {
-                Log.e(TAG, "transferParcelSerial: " + exception);
+                KLog.e(TAG, "transferParcelSerial: " + exception);
             }
         }else{
             bindToService(mContext);
@@ -198,7 +199,7 @@ public class ClientManager {
         try {
             // getNativeHeapAllocatedSize 获取当前进程的堆内存大小
             size = android.os.Debug.getNativeHeapAllocatedSize();
-            Log.e(TAG, "getObjectSize: " + size);
+            KLog.e(TAG, "getObjectSize: " + size);
             return size;
         } catch (Exception e) {
             e.printStackTrace();
@@ -218,11 +219,11 @@ public class ClientManager {
             Sample2 sample2 = new Sample2();
             sample2.setNum(13);
             bundle.putSerializable("sample2", sample2);
-            Log.d("","bundle " + bundle);
+            KLog.d("","bundle " + bundle);
             mCalculator.optionBundle(bundle);
 
         } catch (RemoteException exception) {
-            Log.i(TAG, "transferBundle: " + exception);
+            KLog.i(TAG, "transferBundle: " + exception);
         }
     }
 
@@ -274,15 +275,16 @@ public class ClientManager {
         try {
             for(int i = 0; i< 10; i++){
                 mCalculator.optionOneway(i);
-                Log.i(TAG, "callOneway: " + i +  " " + Thread.currentThread().getName());
+                KLog.i(TAG, "callOneway: " + i +  " " + Thread.currentThread().getName());
             }
         } catch (RemoteException exception) {
-            Log.e(TAG, "callOneway exception : " + exception);
+            KLog.e(TAG, "callOneway exception : " + exception);
         }
     }
 
     // 问题6 - RemoteCallback
-    private void callRemote() {
+    //把对应的listener发送给服务端，作为binder实例保存在服务端，供服务端调用，从而可对客户端发送请求
+    public void callRemote() {
         try {
             ICalculatorListener.Stub listener = new ICalculatorListener.Stub() {
                 @Override
@@ -292,12 +294,17 @@ public class ClientManager {
             };
             mCalculator.registerListener(listener);
 
-//            Thread.sleep(3000);
+            try {
+                Thread.sleep(5000);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+//            //将解注册注释掉，adb杀掉客户端用于测试服务端中MyRemoteCallback的onCallbackDied
 //            mCalculator.unregisterListener(listener);
-//            Log.i(TAG, "callRemote: ");
+            KLog.i(TAG, "callRemote: ");
 
         } catch (RemoteException exception) {
-            Log.i(TAG, "callRemote: " + exception);
+            KLog.i(TAG, "callRemote: " + exception);
         }
     }
 
@@ -305,7 +312,7 @@ public class ClientManager {
     public static final int TYPE_VEHICLE = 2;
 
     // 问题7 - Binder连接池
-    private void callBinderPool() {
+    public void callBinderPool() {
         try {
             IBinder binder = mCalculator.queryBinder(TYPE_HAVC);
             IHvac hvac = IHvac.Stub.asInterface(binder);
@@ -318,22 +325,27 @@ public class ClientManager {
             vehicle.basicTypes(1, 2, true, 3.0f, 4.0, "5");
 
         } catch (RemoteException exception) {
-            Log.i(TAG, "callBinderPool: " + exception);
+            KLog.i(TAG, "callBinderPool: " + exception);
         }
     }
 
+    /**
+     * 权限控制
+     * 1：控制客户端的绑定权限
+     * 2：控制客户端对接口对使用权限
+     */
     // 问题9 - 权限
     @RequiresPermission(PERMISSION)
-    private void callPermission() {
+    public void callPermission() {
         try {
             if (checkPermission()) {
-                Log.i(TAG, "callPermission: 有权限");
+                KLog.i(TAG, "callPermission: 有权限");
                 mCalculator.optionPermission(1);
             } else {
-                Log.i(TAG, "callPermission: 没有权限");
+                KLog.i(TAG, "callPermission: 没有权限");
             }
         } catch (RemoteException exception) {
-            Log.i(TAG, "callPermission: " + exception);
+            KLog.i(TAG, "callPermission: " + exception);
         }
     }
 
@@ -346,6 +358,6 @@ public class ClientManager {
         return mContext.checkSelfPermission(PERMISSION) == PackageManager.PERMISSION_GRANTED;
     }
 
-    public static final String PERMISSION = "com.wj.permission";
+    public static final String PERMISSION = "com.ray.permission";
 
 }

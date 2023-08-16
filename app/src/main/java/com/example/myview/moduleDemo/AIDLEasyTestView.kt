@@ -35,9 +35,9 @@ class AIDLEasyTestView : BaseFragment() {
         add(Item(3,"transferParcelSerial"))
         add(Item(4,"transferBundle"))
         add(Item(5,"callOneway"))
-        add(Item(6,"binder"))
-        add(Item(7,"file"))
-        add(Item(8,"one way"))
+        add(Item(6,"callRemote"))
+        add(Item(7,"callBinderPool"))
+        add(Item(8,"callPermission"))
         add(Item(9,"binderpool"))
     }
 
@@ -61,9 +61,9 @@ class AIDLEasyTestView : BaseFragment() {
             3 -> handleTransferParcelSerial()
             4 -> handleTransferBundle()
             5 -> handleCallOneway()
-            6 -> handleSix()
-            7 -> handleSeven()
-            8 -> handleEight()
+            6 -> handleCallRemote()
+            7 -> handleCallBinderPool()
+            8 -> handleCallPermission()
             9 -> handleNine()
             else -> KLog.d("","null")
         }
@@ -101,13 +101,20 @@ class AIDLEasyTestView : BaseFragment() {
     private fun handleNine() {
     }
 
-    private fun handleEight() {
+    private fun handleCallPermission() {
+        KLog.d(TAG, " - callPermission - ")
+        ClientManager.getInstance().callPermission()
     }
 
-    private fun handleSeven() {
+
+    private fun handleCallBinderPool() {
+        KLog.d(TAG, " - callBinderPool - ")
+        ClientManager.getInstance().callBinderPool()
     }
 
-    private fun handleSix() {
+    private fun handleCallRemote() {
+        KLog.d(TAG, " - callRemote - ")
+        ClientManager.getInstance().callRemote()
     }
 
     private fun handleCallOneway() {

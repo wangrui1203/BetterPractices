@@ -17,7 +17,9 @@
             <option value="$PROJECT_DIR$/app" />
             <option value="$PROJECT_DIR$/mysdk" />
             <option value="$PROJECT_DIR$/myserver" />
+            <option value="$PROJECT_DIR$/standardapp" />
             <option value="$PROJECT_DIR$/standardsdk" />
+            <option value="$PROJECT_DIR$/standardserver" />
           </set>
         </option>
       </GradleProjectSettings>

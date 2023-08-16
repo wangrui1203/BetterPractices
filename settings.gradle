@@ -20,7 +20,12 @@ dependencyResolutionManagement {
 }
 rootProject.name = "MyView"
 include ':app'
-include ':lib_standardsdk'
+//include ':lib_standardsdk'
 include ':standardsdk'
 include ':mysdk'
 include ':myserver'
+//include ':mylib'
+//include ':liblog'
+include ':MyLibs:loglib'
+
+//include ':loglib'

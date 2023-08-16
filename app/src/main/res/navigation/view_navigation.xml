@@ -63,8 +63,8 @@
 
     <fragment
             android:id="@+id/AIDLEasyTestView"
-            android:name="com.example.myview.view.AIDLEasyTestView"
+            android:name="com.example.myview.moduleDemo.AIDLEasyTestView"
             android:label="@string/item_aidl_easyuse"
-            tools:layout="@layout/fragment_module_main"/>
+            tools:layout="@layout/fragment_module_aidl"/>
 
 </navigation>

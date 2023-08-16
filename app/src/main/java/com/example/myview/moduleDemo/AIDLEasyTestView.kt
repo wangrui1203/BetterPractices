@@ -1,17 +1,20 @@
-package com.example.myview.view
+package com.example.myview.moduleDemo
 
 import android.content.Context
+import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.loglib.KLog
 import com.example.myview.R
 import com.example.myview.base.BaseFragment
 import com.example.myview.base.BaseRecyclerAdapter
 import com.example.myview.base.ViewHolder
-import com.example.myview.databinding.FragmentModuleMainBinding
+import com.example.myview.databinding.FragmentModuleAidlBinding
+import com.example.myview.moduleDemo.MyClient.ClientManager
 
 /**
  * @author ray
@@ -19,7 +22,7 @@ import com.example.myview.databinding.FragmentModuleMainBinding
  */
 class AIDLEasyTestView : BaseFragment() {
 
-    private var _binding: FragmentModuleMainBinding? = null
+    private var _binding: FragmentModuleAidlBinding? = null
 
     private val binding get() = _binding!!
 
@@ -27,11 +30,11 @@ class AIDLEasyTestView : BaseFragment() {
 
 
     private val mData = arrayListOf<Item>().apply {
-        add(Item(1,"基础add"))
-        add(Item(2,"基础delete"))
-        add(Item(3,"基础multi"))
-        add(Item(4,"基础devide"))
-        add(Item(5,"parcel"))
+        add(Item(1,"基础使用"))
+        add(Item(2,"transferCustomType"))
+        add(Item(3,"transferParcelSerial"))
+        add(Item(4,"transferBundle"))
+        add(Item(5,"callOneway"))
         add(Item(6,"binder"))
         add(Item(7,"file"))
         add(Item(8,"one way"))
@@ -41,10 +44,11 @@ class AIDLEasyTestView : BaseFragment() {
     //设置adapter
     private val adapter02 = object : BaseRecyclerAdapter<Item>(R.layout.item_button, mData){
         override fun convertView(viewHolder: ViewHolder?, item: Item, position: Int) {
+
             viewHolder?.setText(R.id.button_idx, item.title)
             viewHolder?.setOnClickListener(R.id.button_idx) {
                 val index = mData.indexOf(item) + 1
-                Log.d("","wwwww $index")
+                KLog.d(""," - index - $index")
                 handleButtonClick(index)
             }
         }
@@ -52,23 +56,33 @@ class AIDLEasyTestView : BaseFragment() {
 
     private fun handleButtonClick(index: Int) {
         when(index) {
-            1 -> handleOne()
-            2 -> handleTwo()
-            3 -> handleThree()
-            4 -> handleFour()
-            5 -> handleFive()
+            1 -> handleBaseUse()
+            2 -> handleTransferCustomType()
+            3 -> handleTransferParcelSerial()
+            4 -> handleTransferBundle()
+            5 -> handleCallOneway()
             6 -> handleSix()
             7 -> handleSeven()
             8 -> handleEight()
             9 -> handleNine()
-            else -> Log.d("","null")
+            else -> KLog.d("","null")
         }
     }
 
     //绑定布局
     override fun bindView(inflater: LayoutInflater, container: ViewGroup?): View? {
-        _binding = FragmentModuleMainBinding.inflate(inflater, container, false)
+        _binding = FragmentModuleAidlBinding.inflate(inflater, container, false)
         return binding.root
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        init()
+    }
+
+    private fun init() {
+        Log.d(""," - wwwww init - ")
+        ClientManager.getInstance().bindToService(activity)
     }
 
     //处理业务
@@ -82,9 +96,7 @@ class AIDLEasyTestView : BaseFragment() {
 //                showToast("title: ${itemObj.title}")
             }
         })
-
     }
-
 
     private fun handleNine() {
     }
@@ -98,21 +110,29 @@ class AIDLEasyTestView : BaseFragment() {
     private fun handleSix() {
     }
 
-    private fun handleFive() {
+    private fun handleCallOneway() {
+        KLog.d(TAG, " - callOneway - ")
+        ClientManager.getInstance().callOneway()
     }
 
-    private fun handleFour() {
+    private fun handleTransferBundle() {
+        KLog.d(TAG, " - transferBundle - ")
+        ClientManager.getInstance().transferBundle()
     }
 
-    private fun handleThree() {
+    private fun handleTransferParcelSerial() {
+        KLog.d(TAG, " - transferParcelSerial - ")
+        ClientManager.getInstance().transferParcelSerial()
     }
 
-    private fun handleTwo() {
-
+    private fun handleTransferCustomType() {
+        KLog.d(TAG,"- transferCustomType -")
+        ClientManager.getInstance().transferCustomType()
     }
 
-    private fun handleOne() {
-        Log.d("","wwwww handleOne")
+    private fun handleBaseUse() {
+        KLog.d(TAG,"- handleBaseUse -")
+        ClientManager.getInstance().baseCalculate()
     }
 
     override fun onDestroyView() {

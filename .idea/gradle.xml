@@ -12,8 +12,9 @@
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$" />
+            <option value="$PROJECT_DIR$/MyLibs" />
+            <option value="$PROJECT_DIR$/MyLibs/loglib" />
             <option value="$PROJECT_DIR$/app" />
-            <option value="$PROJECT_DIR$/lib_standardsdk" />
             <option value="$PROJECT_DIR$/mysdk" />
             <option value="$PROJECT_DIR$/myserver" />
             <option value="$PROJECT_DIR$/standardsdk" />

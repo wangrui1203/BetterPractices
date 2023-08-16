@@ -5,6 +5,7 @@ import android.content.pm.PackageManager;
 import android.os.*;
 import android.util.Log;
 import android.util.SparseArray;
+import com.example.loglib.KLog;
 import com.ray.mysdk.ICalculator;
 import com.ray.mysdk.bean.Sample;
 import com.ray.mysdk.bean.Sample2;
@@ -60,25 +61,27 @@ public class CalculatorBinder extends ICalculator.Stub{
 
     @Override
     public void optionParcel(final Sample sample) throws RemoteException {
-        Log.i(TAG, "optionParcel: " + sample);
+        KLog.i(TAG, "optionParcel: " + sample);
     }
 
     @Override
     public void optionBundle(final Bundle bundle) throws RemoteException {
-        Log.i(TAG, "optionBundle: " + bundle.toString());
+//        Log.i(TAG, "optionBundle1: " + bundle);
         bundle.setClassLoader(mContext.getClassLoader());
         Sample2 sample2 = (Sample2) bundle.getSerializable("sample2");
-        Log.i(TAG, "optionBundle: " + sample2.toString());
+        KLog.i(TAG, "optionBundle2: " + sample2);
 
         Sample sample = bundle.getParcelable("sample");
-        Log.i(TAG, "optionBundle: " + sample.toString());
+        KLog.i(TAG, "optionBundle3: " + sample);
     }
 
 
+    //https://juejin.cn/post/7218615271384088633
+    //ParcelFileDescriptor构造一个input数据流，写入本地文件
     @Override
     public void transactFileDescriptor(ParcelFileDescriptor pfd) {
-        Log.i(TAG, "transactFileDescriptor: " + Thread.currentThread().getName());
-        Log.i(TAG, "transactFileDescriptor: calling pid:" + Binder.getCallingPid() + " calling uid:" + Binder.getCallingUid());
+        KLog.i(TAG, "transactFileDescriptor: " + Thread.currentThread().getName());
+        KLog.i(TAG, "transactFileDescriptor: calling pid:" + Binder.getCallingPid() + " calling uid:" + Binder.getCallingUid());
         File file = new File(mContext.getCacheDir(), "file.iso");
         try (
                 ParcelFileDescriptor.AutoCloseInputStream inputStream = new ParcelFileDescriptor.AutoCloseInputStream(pfd);
@@ -101,19 +104,19 @@ public class CalculatorBinder extends ICalculator.Stub{
 
     @Override
     public void optionOneway(final int i) throws RemoteException {
-        Log.i(TAG, "optionOneway: " + i);
+        KLog.i(TAG, "optionOneway: start " + i + " " + Thread.currentThread().getName());
         try {
-            Thread.sleep(10000);
+            Thread.sleep(3000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        Log.i(TAG, "optionOneway: " + i);
+//        Log.i(TAG, "optionOneway: " + i);
     }
 
     @Override
     public void registerListener(final ICalculatorListener listener) throws RemoteException {
-        Log.i(TAG, "registerListener: listener sign:" + listener.hashCode());
-        Log.i(TAG, "registerListener: listener IBinder sign:" + listener.asBinder());
+        KLog.i(TAG, "registerListener: listener sign:" + listener.hashCode());
+        KLog.i(TAG, "registerListener: listener IBinder sign:" + listener.asBinder());
 
         // 错误做法，因为每次Listener都不是一个对象，所以会导致无法移除，应该保存listener.asBinder()来判断
 //            if (!mListeners.contains(listener)) {
@@ -144,8 +147,8 @@ public class CalculatorBinder extends ICalculator.Stub{
 
     @Override
     public void unregisterListener(final ICalculatorListener listener) {
-        Log.i(TAG, "unregisterListener: listener sign:" + listener);
-        Log.i(TAG, "unregisterListener: listener IBinder sign:" + listener.asBinder());
+        KLog.i(TAG, "unregisterListener: listener sign:" + listener);
+        KLog.i(TAG, "unregisterListener: listener IBinder sign:" + listener.asBinder());
         // 错误做法，因为每次Listener都不是一个对象，所以会导致无法移除，应该保存listener.asBinder() 或使用 RemoteCallbackList
 //            mListeners.remove(listener);
 
@@ -157,19 +160,19 @@ public class CalculatorBinder extends ICalculator.Stub{
     @Override
     public void optionPermission(final int i) throws RemoteException {
         // 在oneway 接口中Binder.getCallingPid() 始终为 0
-        Log.i(TAG, "optionPermission: calling pid " + Binder.getCallingPid() + "; calling uid" + Binder.getCallingUid());
+        KLog.i(TAG, "optionPermission: calling pid " + Binder.getCallingPid() + "; calling uid" + Binder.getCallingUid());
 
         // 方法一：检查权限,如果没有权限，抛出SecurityException
         mContext.enforceCallingPermission("com.ray.permission", "没有权限");
 
         // 方法二：检查权限，如果没有权限，返回false
         boolean checked = mContext.checkCallingPermission("com.ray.permission") == PackageManager.PERMISSION_GRANTED;
-        Log.e(TAG, "optionPermission: " + checked);
+        KLog.e(TAG, "optionPermission: " + checked);
     }
 
     // 向客户端发送消息
     private synchronized void notifyToClient() {
-        Log.i(TAG, "notifyToClient");
+        KLog.i(TAG, "notifyToClient");
         int n = mCallbackList.beginBroadcast();
         for (int i = 0; i < n; i++) {
             try {
@@ -205,7 +208,7 @@ public class CalculatorBinder extends ICalculator.Stub{
 
         @Override
         public void basicTypes(final int anInt, final long aLong, final boolean aBoolean, final float aFloat, final double aDouble, final String aString) throws RemoteException {
-            Log.i(TAG, "basicTypes: ");
+            KLog.i(TAG, "basicTypes: ");
         }
     }
 
@@ -214,7 +217,7 @@ public class CalculatorBinder extends ICalculator.Stub{
 
         @Override
         public void basicTypes(final int anInt, final long aLong, final boolean aBoolean, final float aFloat, final double aDouble, final String aString) throws RemoteException {
-            Log.i(TAG, "basicTypes: ");
+            KLog.i(TAG, "basicTypes: ");
         }
     }
 }

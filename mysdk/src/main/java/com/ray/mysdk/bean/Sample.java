@@ -2,6 +2,7 @@ package com.ray.mysdk.bean;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.renderscript.Sampler;
 import androidx.annotation.NonNull;
 
 /**
@@ -11,6 +12,8 @@ import androidx.annotation.NonNull;
 public class Sample implements Parcelable {
     private int mNum;
     private String mStr;
+
+    private Sample2 sample2;
 
     public int getNum() {
         return mNum;
@@ -28,6 +31,13 @@ public class Sample implements Parcelable {
         mStr = str;
     }
 
+    public Sample2 getSample2() {
+        return sample2;
+    }
+
+    public void setSample2(Sample2 sample2) {
+        this.sample2 = sample2;
+    }
 
     @Override
     public int describeContents() {
@@ -36,27 +46,22 @@ public class Sample implements Parcelable {
 
     @Override
     public void writeToParcel(@NonNull Parcel parcel, int i) {
-        parcel.writeInt(this.mNum);
-        parcel.writeString(this.mStr);
+        parcel.writeInt(mNum);
+        parcel.writeString(mStr);
+        parcel.writeSerializable(sample2);
     }
-
-    public void readFromParcel(Parcel source) {
-        this.mNum = source.readInt();
-        this.mStr = source.readString();
-    }
-
-    public Sample() {
-    }
+    public Sample(){}
 
     protected Sample(Parcel in) {
-        this.mNum = in.readInt();
-        this.mStr = in.readString();
+        mNum = in.readInt();
+        mStr = in.readString();
+        sample2 = (Sample2) in.readSerializable();
     }
 
     public static final Creator<Sample> CREATOR = new Creator<Sample>() {
         @Override
-        public Sample createFromParcel(Parcel source) {
-            return new Sample(source);
+        public Sample createFromParcel(Parcel in) {
+            return new Sample(in);
         }
 
         @Override
@@ -64,4 +69,13 @@ public class Sample implements Parcelable {
             return new Sample[size];
         }
     };
+
+    @Override
+    public String toString() {
+        return "Sample{" +
+                "mNum=" + mNum +
+                ", mStr='" + mStr + '\'' +
+                ", sample2=" + sample2 +
+                '}';
+    }
 }

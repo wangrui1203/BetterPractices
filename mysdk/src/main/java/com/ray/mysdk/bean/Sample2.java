@@ -17,4 +17,11 @@ public class Sample2 implements Serializable {
     public void setNum(final int num) {
         mNum = num;
     }
+
+    @Override
+    public String toString() {
+        return "Sample2{" +
+                "mNum=" + mNum +
+                '}';
+    }
 }

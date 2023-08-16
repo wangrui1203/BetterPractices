@@ -71,36 +71,6 @@ class ModuleMainFragment :BaseFragment() {
 
     }
 
-
-    private fun handleNine() {
-    }
-
-    private fun handleEight() {
-    }
-
-    private fun handleSeven() {
-    }
-
-    private fun handleSix() {
-    }
-
-    private fun handleFive() {
-    }
-
-    private fun handleFour() {
-    }
-
-    private fun handleThree() {
-    }
-
-    private fun handleTwo() {
-
-    }
-
-    private fun handleOne() {
-        Log.d("","wwwww handleOne")
-    }
-
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null

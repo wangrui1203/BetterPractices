@@ -3,6 +3,7 @@ package com.ray.myserver;
 import android.os.IInterface;
 import android.os.RemoteCallbackList;
 import android.util.Log;
+import com.example.loglib.KLog;
 
 /**
  * @author ray
@@ -23,7 +24,7 @@ public class MyRemoteCallback <E extends IInterface> extends RemoteCallbackList<
     @Override
     public void onCallbackDied(final E callback, final Object cookie) {
         super.onCallbackDied(callback, cookie);
-        Log.i(TAG, "onCallbackDied: 线程名：" + Thread.currentThread().getName() + "，Callback：" + callback + "，cookie: " + cookie);
+        KLog.i(TAG, "onCallbackDied: 线程名：" + Thread.currentThread().getName() + "，Callback：" + callback + "，cookie: " + cookie);
     }
 
 }

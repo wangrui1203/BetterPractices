@@ -147,9 +147,9 @@ public class SdkManager extends SdkBase<ISdk> {
 
     private int getSystemServiceType(@NonNull Class<?> serviceClass) {
         switch (serviceClass.getSimpleName()) {
-            case "AudioManager":
+            case "AudioSdkManager":
                 return SERVICE_AUDIO;
-            case "InfoManager":
+            case "InfoSdkManager":
                 return SERVICE_INFO;
             default:
                 return -1;

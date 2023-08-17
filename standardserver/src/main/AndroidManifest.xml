@@ -1,6 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
           package="com.ray.standardserver">
+    <!--是否需要增加后台service权限？-->
+<!--    <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>-->
+
+    <!--    自定义接口权限   -->
+    <permission
+            android:name="com.ray.standardsdk.permission.AUDIO"
+            android:protectionLevel="signature"/>
+
+    <!--    自定义连接权限   -->
+    <permission
+            android:name="com.ray.standardsdk.permission.service"
+            android:protectionLevel="signature"/>
 
     <application
             android:allowBackup="true"
@@ -9,6 +21,16 @@
             android:roundIcon="@mipmap/ic_launcher_round"
             android:supportsRtl="true"
             android:theme="@style/Theme.MyView">
+        <service
+            android:name=".StandardService"
+            android:process=":remote"
+            android:enabled="true"
+            android:exported="true"
+            android:permission="com.ray.standardsdk.permission.service">
+            <intent-filter>
+                <action android:name="android.intent.action.STANDARD_SERVICE"/>
+            </intent-filter>
+        </service>
 <!--        <activity-->
 <!--                android:name=".MainActivity"-->
 <!--                android:exported="true">-->

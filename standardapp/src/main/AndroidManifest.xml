@@ -2,6 +2,12 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
           package="com.ray.standardapp">
 
+    <queries>
+        <package android:name="com.ray.standardserver" />
+    </queries>
+    <uses-permission android:name="com.ray.standardsdk.permission.AUDIO" />
+
+    <uses-permission android:name="com.ray.standardsdk.permission.service" />
     <application
             android:allowBackup="true"
             android:icon="@mipmap/ic_launcher"

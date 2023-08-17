@@ -14,6 +14,10 @@ android {
         consumerProguardFiles "consumer-rules.pro"
     }
 
+    buildFeatures {
+        aidl true
+    }
+
     buildTypes {
         release {
             minifyEnabled false
@@ -38,3 +42,22 @@ dependencies {
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
 }
+
+//makeJar
+def zipFile = file('build/intermediates/aar_main_jar/release/classes.jar')
+task makeJar(type: Jar){
+    from zipTree(zipFile)
+    archivesBaseName = "sdk"
+    destinationDirectory = file("build/outputs/")
+    manifest {
+        attributes(
+                'Implementation-Title' : "${project.name}",
+                'Built-Date': new Date().getDateTimeString(),
+                'Built-With':
+                    "gradle-${project.getGradle().getGradleVersion()}, groovy-${GroovySystem.getVersion()}",
+                'Created-By':
+                    'Java ' + System.getProperty('java.version') + ' ( ' + System.getProperty('java.vendor') + ')'
+        )
+    }
+}
+makeJar.dependsOn(build)

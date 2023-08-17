@@ -14,6 +14,8 @@
         <entry key="app/src/main/res/layout/item_left_delete.xml" value="0.1140625" />
         <entry key="app/src/main/res/layout/item_main.xml" value="0.1" />
         <entry key="app/src/main/res/layout/item_slide_delete.xml" value="0.1" />
+        <entry key="standardapp/src/main/res/layout/activity_main.xml" value="0.15989583333333332" />
+        <entry key="standardserver/src/main/res/layout/activity_main.xml" value="0.10778985507246377" />
       </map>
     </option>
   </component>

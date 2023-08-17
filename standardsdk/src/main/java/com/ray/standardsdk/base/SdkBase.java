@@ -142,9 +142,11 @@ public abstract class SdkBase<T extends IInterface> {
 
     private void startConnect() {
         ComponentName componentName = new ComponentName(getServicePackage(), getServiceClassName());
+        Log.d(getLogTag(), "componentName " + componentName);
         Intent intent = new Intent();
         if(getServiceAction() != null){
             intent.setAction(getServiceAction());
+            Log.d(getLogTag(), "getServiceAction " + getServiceAction());
         }
         intent.setComponent(componentName);
         //是否需要启动Service

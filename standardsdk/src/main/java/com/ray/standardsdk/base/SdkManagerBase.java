@@ -7,7 +7,7 @@ import android.os.RemoteException;
 /**
  * @author ray
  * @date 2023/8/4 13:20
- *
+ * 服务端提供的业务逻辑的基类
  */
 public abstract class SdkManagerBase {
     public static final String TAG = "CAR.SERVICE";

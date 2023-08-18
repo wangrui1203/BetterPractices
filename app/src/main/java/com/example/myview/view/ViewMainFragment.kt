@@ -79,7 +79,7 @@ class ViewMainFragment: BaseFragment() {
 //                Log.d("","wwwww item ${itemObj}")
                 view?.findNavController()?.navigate(when(itemObj.index) {
                     1 -> R.id.action_main_to_slide_delete
-//                    2 -> R.id.action_main_to_left_delete
+                    2 -> R.id.action_main_to_left_delete
 //                    3 -> R.id.action_main_to_header_footer
 //                    4 -> R.id.action_main_to_scroll_select
 //                    5 -> R.id.action_main_to_layer_slide

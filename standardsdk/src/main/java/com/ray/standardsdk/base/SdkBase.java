@@ -25,6 +25,10 @@ import java.util.Objects;
  * 为了让子类能够更方便地实现与服务端的连接。
  * 内部实现Service重连机制，并对外暴露connect()、disconnect()、isConnected()等方法
  * https://juejin.cn/post/7236009756530933819?searchId=202308040923021AF10BB194202B6716F8
+ *
+ * 实现根据具体要求，应该有所取舍。
+ * 例如该网址中，不会杀客户端，使用死亡代理，调用处若断开连接，则放入一个队列中，等待连接后进行执行
+ * https://juejin.cn/post/7083140299916050468
  */
 public abstract class SdkBase<T extends IInterface> {
     //@interface为注解类，jdk1.5之后用于自定义注解

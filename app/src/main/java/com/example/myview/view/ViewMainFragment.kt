@@ -26,6 +26,9 @@ class ViewMainFragment: BaseFragment() {
         add(Item(2, "左划删除控件: LeftDeleteItemLayout",
             "继承View实现对控件左滑达到删除功能，学习自定义View、动态生成控件、kotlin构造函数、postDelayed函数"))
 
+        add(Item(3, "数字雨: NeoView",
+            "继承View实现数字雨效果"))
+
         add(Item(3, "带header和footer的Layout: HeaderFooterView",
             "继承ViewGroup实现滚动自动隐藏header和footer的控件，学习自定义ViewGroup、onMeasure、MeasureSpec、onLayout的使用"))
 
@@ -80,6 +83,7 @@ class ViewMainFragment: BaseFragment() {
                 view?.findNavController()?.navigate(when(itemObj.index) {
                     1 -> R.id.action_main_to_slide_delete
                     2 -> R.id.action_main_to_left_delete
+                    3 -> R.id.action_main_to_number_rain
 //                    3 -> R.id.action_main_to_header_footer
 //                    4 -> R.id.action_main_to_scroll_select
 //                    5 -> R.id.action_main_to_layer_slide

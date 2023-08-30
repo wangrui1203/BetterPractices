@@ -11,7 +11,7 @@
 
 ### 布局
 content 占满屏幕，菜单View在屏幕之外，当滑动的时候，content 滑屏幕，menu 进入屏幕，就达到了需要的效果，布局草图如下：
-![img_1.png](img_1.png)
+![img_1.png](img/img_1.png)
 
 
 ## 自定义RecyclerView

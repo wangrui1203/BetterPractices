@@ -262,7 +262,7 @@ Fragment Result API 也可以用于在父 Fragment 和子 Fragment 之间传递�
 
 每一个载体（Activity 或者 Fragment）都包含一个和自身同等级的 FragmentManager 用于管理子 Fragment，对应 Activity 的 supportFragmentManager 和 Fragment 的 childFragmentManager；每一个 子 Fragment 也都包含一个来自于载体的 FragmentManager，对应 Fragment 的 parentFragmentManager
 
-![img_2.png](img_2.png)
+![img_2.png](img/img_2.png)
 
 
 
@@ -467,7 +467,7 @@ showToast("permission：" + s + " grantResult：" + grantResults[index])
 
 
 
-![img.png](img.png)
+![img.png](img/img.png)
 
 fragment功能
 https://blog.csdn.net/lmj623565791/article/details/37970961

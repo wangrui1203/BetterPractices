@@ -34,6 +34,10 @@
             android:id="@+id/action_main_to_left_delete"
             app:destination="@id/leftDeleteItemLayoutDemo">
         </action>
+        <action
+                android:id="@+id/action_main_to_number_rain"
+                app:destination="@id/NeoViewDemo">
+        </action>
     </fragment>
     <fragment
             android:id="@+id/SlideDeleteRecycleViewDemo"
@@ -46,6 +50,11 @@
         android:name="com.example.myview.viewDemo.LeftDeleteItemLayoutDemo"
         android:label="@string/item_delete_fragment"
         tools:layout="@layout/fragment_left_delete"/>
+    <fragment
+            android:id="@+id/NeoViewDemo"
+            android:name="com.example.myview.viewDemo.NeoViewDemo"
+            android:label="@string/item_numberrain_fragment"
+            tools:layout="@layout/fragment_neo_view"/>
 
 
     <!-- =============================  module  =============================       -->

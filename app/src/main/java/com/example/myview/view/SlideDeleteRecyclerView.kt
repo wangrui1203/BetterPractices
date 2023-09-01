@@ -15,6 +15,7 @@ import java.lang.Math.abs
  * 1.在down事件中，判断在列表内位置，得到对应item
  * 2.拦截move事件，item跟随滑动，最大距离为删除按钮长度
  * 3.在up事件中，确定最终状态，固定item位置
+ * https://juejin.cn/column/7221557748902559781
  */
 class SlideDeleteRecyclerView @JvmOverloads constructor(
     context: Context,

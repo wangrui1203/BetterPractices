@@ -29,6 +29,9 @@ class ViewMainFragment: BaseFragment() {
         add(Item(3, "数字雨: NeoView",
             "继承View实现数字雨效果"))
 
+        add(Item(4, "进度条圆环: CircleView",
+            "继承View实现自定义进度条圆环"))
+
         add(Item(3, "带header和footer的Layout: HeaderFooterView",
             "继承ViewGroup实现滚动自动隐藏header和footer的控件，学习自定义ViewGroup、onMeasure、MeasureSpec、onLayout的使用"))
 
@@ -84,6 +87,7 @@ class ViewMainFragment: BaseFragment() {
                     1 -> R.id.action_main_to_slide_delete
                     2 -> R.id.action_main_to_left_delete
                     3 -> R.id.action_main_to_number_rain
+                    4 -> R.id.action_main_to_progress_circle
 //                    3 -> R.id.action_main_to_header_footer
 //                    4 -> R.id.action_main_to_scroll_select
 //                    5 -> R.id.action_main_to_layer_slide

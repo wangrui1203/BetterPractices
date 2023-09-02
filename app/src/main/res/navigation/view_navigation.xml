@@ -38,6 +38,11 @@
                 android:id="@+id/action_main_to_number_rain"
                 app:destination="@id/NeoViewDemo">
         </action>
+        <action
+                android:id="@+id/action_main_to_progress_circle"
+                app:destination="@id/CircleViewDemo">
+        </action>
+
     </fragment>
     <fragment
             android:id="@+id/SlideDeleteRecycleViewDemo"
@@ -55,6 +60,11 @@
             android:name="com.example.myview.viewDemo.NeoViewDemo"
             android:label="@string/item_numberrain_fragment"
             tools:layout="@layout/fragment_neo_view"/>
+    <fragment
+            android:id="@+id/CircleViewDemo"
+            android:name="com.example.myview.viewDemo.CircleViewDemo"
+            android:label="@string/item_progresscircle_fragment"
+            tools:layout="@layout/fragment_circle_view"/>
 
 
     <!-- =============================  module  =============================       -->

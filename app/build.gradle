@@ -42,6 +42,7 @@ dependencies {
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
     implementation 'androidx.navigation:navigation-fragment-ktx:2.5.3'
     implementation 'androidx.navigation:navigation-ui-ktx:2.5.3'
+//    implementation 'androidx.annotation:annotation-jvm:+'
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
@@ -50,4 +51,20 @@ dependencies {
     implementation project(':mysdk')
 
     implementation project(':MyLibs:loglib')
+
+    compileOnly files('../MyLibs/framework/framework.jar')
+//    compileOnly fileTree( dir: '../MyLibs/framework', includes: ['*.jar'])
+//    compileOnly files('../framework/framework.jar')
 }
+
+gradle.projectsEvaluated{
+    tasks.withType(JavaCompile){
+        Set<File> fileSet = options.bootstrapClasspath.getFiles()
+        List<File> newFileList = new ArrayList<>();
+        //相对位置，根据存放的位置修改路径，将framework.jar插入到最前面
+        newFileList.add(new File("../MyLibs/framework/framework.jar"))
+        newFileList.addAll(fileSet)
+        options.bootstrapClasspath = files(newFileList.toArray())
+    }
+}
+

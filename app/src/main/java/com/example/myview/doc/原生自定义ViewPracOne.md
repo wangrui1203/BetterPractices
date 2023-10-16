@@ -89,7 +89,7 @@ public class MyView extends View {
 2）通过StyledAttributes 来拿到我们定义的属性值。
 3）不同画笔和矩阵资源的声明与初始化
 4）设置圆的中心点，半径，矩阵大小之类的方向位置信息
-5）onDraw文本与圆环的绘制[AndroidManifest.xml](..%2F..%2F..%2F..%2F..%2F..%2F..%2F..%2F..%2F..%2FDownloads%2FMyCircleProgressView-master%2Fcircle_progress_view%2Fsrc%2Fmain%2FAndroidManifest.xml)
+5）onDraw文本与圆环的绘制
 5.1）绘制中心文本：百分比和提示文本。百分比显示值；对中心点向下偏移15即可定位绘制提示文本
 5.2）绘制圆环：设置起始角度（从顶部）和绘制角度（360度），绘制背景圆
 6）动起来，定义一个属性动画，定义出开始的百分比进度，计算总共需要的百分比进度，通过属性动画完成动作
